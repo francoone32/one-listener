@@ -302,6 +302,56 @@
     const sendButton = document.getElementById('send-button');
     const formError = document.getElementById('form-error');
 
+    const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    function playCassetteSound() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+
+        const ctx = new AudioContext();
+        const master = ctx.createGain();
+        master.gain.setValueAtTime(0.08, ctx.currentTime);
+        master.connect(ctx.destination);
+
+        const click = (time, frequency, duration, volume) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(frequency, time);
+          gain.gain.setValueAtTime(volume, time);
+          gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+          osc.connect(gain);
+          gain.connect(master);
+          osc.start(time);
+          osc.stop(time + duration);
+        };
+
+        const now = ctx.currentTime;
+        click(now, 145, 0.045, 0.9);
+        click(now + 0.075, 92, 0.075, 0.75);
+
+        const motor = ctx.createOscillator();
+        const motorGain = ctx.createGain();
+        motor.type = 'sawtooth';
+        motor.frequency.setValueAtTime(58, now + 0.12);
+        motorGain.gain.setValueAtTime(0.0001, now + 0.12);
+        motorGain.gain.linearRampToValueAtTime(0.13, now + 0.28);
+        motorGain.gain.setValueAtTime(0.13, now + 2.18);
+        motorGain.gain.linearRampToValueAtTime(0.0001, now + 2.5);
+        motor.connect(motorGain);
+        motorGain.connect(master);
+        motor.start(now + 0.12);
+        motor.stop(now + 2.55);
+
+        click(now + 2.42, 110, 0.055, 0.55);
+
+        setTimeout(() => ctx.close().catch(() => {}), 3000);
+      } catch (_) {
+        // Sound is decorative; submission should never depend on it.
+      }
+    }
+
     openForm.addEventListener('click', () => {
       intro.hidden = true;
       submission.hidden = false;
@@ -314,13 +364,19 @@
       sendButton.disabled = true;
       submission.hidden = true;
       loading.hidden = false;
+      playCassetteSound();
 
       try {
-        const response = await fetch(form.action, {
+        const submissionRequest = fetch(form.action, {
           method: 'POST',
           body: new FormData(form),
           headers: { 'Accept': 'application/json' }
         });
+
+        const [response] = await Promise.all([
+          submissionRequest,
+          wait(2600)
+        ]);
 
         if (!response.ok) throw new Error('Submission failed');
 
