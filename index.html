@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ONE LISTENER</title>
+  <meta name="description" content="No followers. No numbers. No label. No pitch. Play me one thing." />
+  <style>
+    :root {
+      --paper: #f2efe7;
+      --ink: #11110f;
+      --muted: #66645d;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Courier New", Courier, monospace;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+    }
+
+    main {
+      width: min(680px, 100%);
+      min-height: 72vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .title {
+      font-size: clamp(2.4rem, 8vw, 5.8rem);
+      line-height: .92;
+      letter-spacing: -0.06em;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .middle {
+      margin: 64px 0;
+    }
+
+    .rules {
+      margin: 0 0 42px;
+      padding: 0;
+      list-style: none;
+      font-size: clamp(1rem, 2.4vw, 1.3rem);
+      line-height: 1.7;
+    }
+
+    .prompt {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 6vw, 4.3rem);
+      line-height: 1.03;
+      margin: 0 0 30px;
+      font-weight: 400;
+    }
+
+    .button {
+      display: inline-block;
+      border: 1.5px solid var(--ink);
+      color: var(--ink);
+      text-decoration: none;
+      padding: 15px 19px 13px;
+      font-size: .95rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: background .15s ease, color .15s ease;
+    }
+
+    .button:hover,
+    .button:focus-visible {
+      background: var(--ink);
+      color: var(--paper);
+      outline: none;
+    }
+
+    footer {
+      font-size: .78rem;
+      color: var(--muted);
+      letter-spacing: .02em;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 class="title">ONE<br>LISTENER</h1>
+
+    <section class="middle" aria-label="One Listener introduction">
+      <ul class="rules">
+        <li>No followers.</li>
+        <li>No numbers.</li>
+        <li>No label.</li>
+        <li>No pitch.</li>
+      </ul>
+
+      <p class="prompt">Play me one thing.</p>
+
+      <a class="button" href="#" aria-disabled="true">Play something</a>
+    </section>
+
+    <footer>Someone will actually listen.</footer>
+  </main>
+</body>
+</html>
