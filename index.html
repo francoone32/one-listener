@@ -86,6 +86,12 @@
       outline: none;
     }
 
+    button:disabled {
+      background: var(--ink);
+      color: var(--paper);
+      cursor: wait;
+    }
+
     .screen[hidden] { display: none; }
 
     form {
@@ -193,7 +199,7 @@
       event.preventDefault();
       formError.hidden = true;
       sendButton.disabled = true;
-      sendButton.textContent = 'Sending';
+      sendButton.textContent = 'Listening…';
 
       try {
         const response = await fetch(form.action, {
