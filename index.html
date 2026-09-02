@@ -311,15 +311,37 @@
 
         const ctx = new AudioContext();
         const master = ctx.createGain();
-        master.gain.setValueAtTime(0.045, ctx.currentTime);
+        master.gain.setValueAtTime(0.12, ctx.currentTime);
         master.connect(ctx.destination);
+        const now = ctx.currentTime;
 
-        const clack = (time, frequency, duration, volume) => {
+        const noiseBurst = (time, duration, cutoff, volume) => {
+          const frames = Math.max(1, Math.floor(ctx.sampleRate * duration));
+          const buffer = ctx.createBuffer(1, frames, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < frames; i++) data[i] = Math.random() * 2 - 1;
+
+          const source = ctx.createBufferSource();
+          const filter = ctx.createBiquadFilter();
+          const gain = ctx.createGain();
+          source.buffer = buffer;
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(cutoff, time);
+          gain.gain.setValueAtTime(volume, time);
+          gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+          source.connect(filter);
+          filter.connect(gain);
+          gain.connect(master);
+          source.start(time);
+          source.stop(time + duration);
+        };
+
+        const thunk = (time, fromHz, toHz, duration, volume) => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(frequency, time);
-          osc.frequency.exponentialRampToValueAtTime(Math.max(45, frequency * 0.55), time + duration);
+          osc.frequency.setValueAtTime(fromHz, time);
+          osc.frequency.exponentialRampToValueAtTime(toHz, time + duration);
           gain.gain.setValueAtTime(volume, time);
           gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
           osc.connect(gain);
@@ -328,11 +350,14 @@
           osc.stop(time + duration);
         };
 
-        const now = ctx.currentTime;
-        clack(now, 170, 0.055, 0.9);
-        clack(now + 0.065, 95, 0.11, 0.75);
+        // Plastic door contact, transport catches the cassette, then the latch seats.
+        noiseBurst(now, 0.045, 2600, 0.35);
+        noiseBurst(now + 0.075, 0.09, 900, 0.48);
+        thunk(now + 0.06, 115, 58, 0.15, 0.75);
+        noiseBurst(now + 0.22, 0.035, 3400, 0.28);
+        thunk(now + 0.215, 82, 52, 0.08, 0.42);
 
-        setTimeout(() => ctx.close().catch(() => {}), 500);
+        setTimeout(() => ctx.close().catch(() => {}), 700);
       } catch (_) {
         // Decorative only. Submission never depends on sound.
       }
