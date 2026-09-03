@@ -37,7 +37,9 @@
       line-height: .86;
       letter-spacing: -0.075em;
       margin: 0;
-      font-weight: 700;
+      font-weight: 900;
+      -webkit-text-stroke: .55px var(--ink);
+      paint-order: stroke fill;
       text-transform: uppercase;
     }
 
@@ -58,6 +60,12 @@
       letter-spacing: -0.055em;
       margin: 0 0 30px;
       font-weight: 700;
+    }
+
+    .hero-prompt {
+      font-weight: 900;
+      -webkit-text-stroke: .35px var(--ink);
+      paint-order: stroke fill;
     }
 
     .button,
@@ -254,7 +262,7 @@
         <li>No pitch.</li>
       </ul>
 
-      <p class="prompt">Play me one thing.</p>
+      <p class="prompt hero-prompt">Play me one thing.</p>
       <button type="button" id="open-form">Play something</button>
     </section>
 
